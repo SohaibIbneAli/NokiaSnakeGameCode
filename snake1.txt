@@ -1,0 +1,363 @@
+#include<iostream>
+#include<time.h>
+#include<conio.h>
+#include<windows.h>
+char array[10][10];
+void boundary(int&, int&, int&, int&);
+void boundaryCheck(int &, int &, int);
+void coutt(int);
+void snakeMove(int &, int &, int &, int &, int&);
+void snakeCheck(int &, int &);
+void end();
+int point(int&, int&, int&, int&, int&);
+using namespace std;
+int main()
+{
+	srand(time(NULL));
+	int  i, i1, s, s1;
+	int points = 0;
+	boundary(i, i1, s, s1);
+	coutt(points);
+	snakeMove(s, s1, i, i1, points);
+
+	system("pause");
+}
+void coutt(int points)
+{
+	system("cls");
+	cout << endl;
+	for (int i = 0; i < 10; ++i)
+	{
+		cout << "   \n\n\t";
+		for (int j = 0; j < 10; ++j)
+		{
+			cout << "    " << array[i][j] << "    ";
+		}
+		cout << endl;
+	}
+	cout << "\nPOints = " << points << endl;;
+}
+
+void boundary(int &i, int &i1, int &s, int &s1)
+{
+	for (int q = 0; q < 10; ++q)
+	{
+		for (int w = 0; w < 10; ++w)
+		{
+			array[q][w] = '.';
+		}
+	}
+
+	for (int q = 1; q < 9; ++q)
+	{
+		array[0][q] = '-';
+		array[9][q] = '-';
+	}
+
+	for (int q = 0; q < 10; ++q)
+	{
+		array[q][0] = '|';
+		array[q][9] = '|';
+
+	}
+
+	bool z = true;
+	while (z)
+	{
+		i = rand() % 10;
+		i1 = rand() % 10;
+		s = rand() % 7;
+		s1 = rand() % 7;
+		s++;
+		s1++;
+
+		array[i][i1] = '&';
+
+		for (int i = 0; i < 2; ++i)
+		{
+			array[s][s1 + i] = '#';
+		}
+
+		int x = 1;
+
+		boundaryCheck(i, i1, x);
+
+		if (x)
+		{
+			x = 0;
+			boundaryCheck(s, s1, x);
+
+		}
+
+		if (i == s&&i1 == s1)
+		{
+			z = true;
+		}
+		else
+		{
+			z = false;
+		}
+	}
+}
+
+void boundaryCheck(int &i, int &j, int x)
+{
+	for (int m = 0; m < 10; ++m)
+	{
+		if (array[m][0] == array[i][j])
+		{
+			if (!x)
+			{
+				array[i][j] = '|';
+
+				array[i][j + 1] = '#';
+				j = j + 1;
+			}
+			else
+			{
+				array[i][j] = '|';
+				array[i][j + 1] = '&';
+				j = j + 1;
+			}
+		}
+		if (array[m][9] == array[i][j])
+		{
+			if (!x)
+			{
+				array[i][j] = '|';
+				array[i][j - 1] = '#';
+				j = j - 1;
+			}
+			else
+			{
+				array[i][j] = '|';
+				array[i][j - 1] = '&';
+				j = j - 1;
+			}
+		}
+	}
+	for (int m = 1; m < 9; ++m)
+	{
+		if (array[0][m] == array[i][j])
+		{
+			if (!x)
+			{
+				array[i][j] = '-';
+				array[i + 1][j] = '#';
+				i = i + 1;
+			}
+			else
+			{
+				array[i][j] = '-';
+				array[i + 1][j] = '&';
+				i = i + 1;
+			}
+		}
+		if (array[9][m] == array[i][j])
+		{
+			if (!x)
+			{
+				array[i][j] = '-';
+				array[i - 1][j] = '#';
+				i = i - 1;
+			}
+			else
+			{
+				array[i][j] = '-';
+				array[i - 1][j] = '&';
+				i = i - 1;
+			}
+		}
+	}
+
+}
+void snakeMove(int &s, int &s1, int &i, int &i1, int &points)
+{
+
+
+	int counter = 0;
+	char m = 4, temp;
+	
+	while (1)
+	{
+		temp = m;
+		m = _getch();
+	
+		
+		if (m == 'w')
+		{
+			
+			s = s - 1;
+			
+			if (temp == 'd')
+			{
+				array[s + 1][s1 - 1] = '.';
+			}
+			else if (temp == 'd')
+			{
+				array[s-1][s1-1] = '.';
+			}
+			else if (temp == 'a')
+			{
+				array[s+1][s1+1] = '.';
+			}
+			if (counter == 0)
+			{
+				array[s][s1] = '#';
+				array[s + 1][s1 + 1] = '.';
+
+			}
+			else if (counter > 0)
+			{
+				array[s][s1] = '#';
+				array[s + 2][s1] = '.';
+
+			}
+			++counter;
+			snakeCheck(s, s1);
+			points = point(s, s1, i, i1, points);
+			coutt(points);
+		}
+		else if (m == 's')
+		{
+			//counter++;
+			s = s + 1;
+			if (temp == 'a')
+			{
+				array[s-1][s1+1] = '.';
+			}
+			else if (temp == 'd')
+			{
+				array[s - 1][s1 -1] = '.';
+			}
+			if (counter == 0)
+			{
+				array[s][s1] = '#';
+				array[s - 1][s1 + 1] = '.';
+
+			}
+			else if (counter > 0)
+			{
+				array[s][s1] = '#';
+				array[s - 2][s1] = '.';
+
+			}
+			counter++;
+
+			snakeCheck(s, s1);
+			points = point(s, s1, i, i1, points);
+			coutt(points);
+		}
+		else if (m == 'a')
+		{
+
+			s1 = s1 - 1;
+			if (temp == 's')
+			{
+				array[s-1][s1+1] = '.';
+			}
+			if (temp == 'w')
+			{
+				array[s + 1][s1 + 1] = '.';
+			}
+			
+				array[s][s1] = '#';
+				array[s][s1 + 2] = '.';
+
+			
+
+
+			snakeCheck(s, s1);
+			points = point(s, s1, i, i1, points);
+			coutt(points);
+		}
+		else if (m == 'd')
+		{
+			
+			if (temp == 's')
+			{
+				array[s-1][s1] = '.';
+			}
+			
+			 if (temp == 'w')
+			{
+				array[s + 1][s1] = '.';
+			}	
+			 
+			if (counter == 0)
+			{
+				s1 = s1 + 2;
+
+				array[s][s1] = '#';
+				array[s][s1 - 2] = '.';
+
+			}
+			else if (counter > 0)
+			{
+				s1 = s1 + 1;
+				array[s][s1] = '#';
+				array[s][s1 - 2] = '.';
+			}
+			counter++;
+			snakeCheck(s, s1);
+			points = point(s, s1, i, i1, points);
+			coutt(points);
+		}
+	}
+
+}
+
+void snakeCheck(int &i, int &j)
+{
+	for (int m = 0; m < 10; ++m)
+	{
+		if (array[m][0] == array[i][j] || array[m][9] == array[i][j])
+		{
+			end();
+		}
+	}
+	for (int m = 1; m < 9; ++m)
+	{
+		if (array[0][m] == array[i][j] || array[9][m] == array[i][j])
+		{
+			end();
+		}
+	}
+
+}
+
+int point(int &s, int &s1, int &i, int &i1, int &points)
+{
+
+	if (array[s][s1] == array[i][i1])
+	{
+
+		++points;
+		i = rand() % 10;
+		i1 = rand() % 10;
+		array[i][i1] = '&';
+		int x = 1;
+		boundaryCheck(i, i1, x);
+	}
+
+	return points;
+}
+void end()
+{
+	cout << "\nYou losse the game \n";
+	if (1)
+	{
+		Beep(525, 50000);
+		system("cls");
+	}
+	system("pause");
+
+}
+void snakeLength(int &s, int &s1)
+{
+
+
+
+
+
+}
